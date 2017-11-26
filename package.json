@@ -1,0 +1,24 @@
+{
+  "name": "rst-rxjs-workshop",
+  "version": "0.1.0",
+  "description": "Exercises for the RxJS workshop held at RST Software Masters",
+  "main": "observable.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [
+    "rxjs",
+    "reactivex",
+    "rst"
+  ],
+  "author": "Marcin Wysocki",
+  "license": "MIT",
+  "dependencies": {
+    "jest": "^21.2.1"
+  },
+  "jest": {
+      "verbose": true,
+      "testRegex": "test/.*\\.spec\\.js"
+  }
+}
