@@ -30,10 +30,46 @@ class Observable {
                 observer.next(counter);
                 counter++;
             }, period);
+<<<<<<< 836bfe0a84ce884fa0e81691ea912bf3e2725c3d
 
             return {
                 unsubscribe() {
                     clearInterval(interval);
+=======
+
+            return {
+                unsubscribe() {
+                    clearInterval(interval);
+                },
+            };
+        });
+    }
+
+    // ex. 3
+    take(count) {
+        return new Observable(observer => {
+            let counter = 0;
+
+            const parentSubscription = this.subscribe({
+                next(value) {
+                    if (counter < count) {
+                        observer.next(value);
+                        counter++;
+                    } else {
+                        parentSubscription.unsubscribe();
+                        observer.complete();
+                    }
+                },
+                complete() {
+                    parentSubscription.unsubscribe();
+                    observer.complete();
+                },
+            });
+
+            return {
+                unsubscribe() {
+                    parentSubscription.unsubscribe();
+>>>>>>> stage1 solution
                 },
             };
         });
