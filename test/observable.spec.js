@@ -42,7 +42,7 @@ describe('Observable', () => {
             expect(Observable.of(1, 2, 3)).toBeInstanceOf(Observable);
         });
 
-        it("outputs all passed arguments one by on synchronously", () => {
+        it('outputs all passed arguments one by on synchronously', () => {
             const fakeObservable = Observable.of(1, 2, 3);
 
             fakeObservable.subscribe(fakeObserver);
@@ -76,6 +76,111 @@ describe('Observable', () => {
 
         it('.subscribe() returns the subscription', () => {
             const fakeObservable = Observable.of(1, 2, 3);
+
+            const subscription = fakeObservable.subscribe(fakeObserver);
+
+            expect(subscription).toBeDefined();
+            expect(subscription.unsubscribe).toBeDefined();
+            expect(subscription.unsubscribe).toBeInstanceOf(Function);
+        });
+    });
+
+    describe('interval()', () => {
+        beforeEach(() => {
+            jest.clearAllTimers();
+            jest.useFakeTimers();
+        });
+
+        it('returns an Observable', () => {
+            expect(Observable.interval(200)).toBeInstanceOf(Observable);
+        });
+
+        it('emits values with specified interval', () => {
+            const fakeObservable = Observable.interval(50);
+
+            fakeObservable.subscribe(fakeObserver);
+            jest.runTimersToTime(200);
+
+            expect(fakeObserver.next).toHaveBeenCalledTimes(4);
+        });
+
+        it('emits incrementing numbers, starting with 0', () => {
+            const fakeObservable = Observable.interval(50);
+
+            fakeObservable.subscribe(fakeObserver);
+            jest.runTimersToTime(200);
+
+            expect(fakeObserver.next.mock.calls.length).toBe(4);
+            expect(fakeObserver.next.mock.calls[0][0]).toBe(0);
+            expect(fakeObserver.next.mock.calls[1][0]).toBe(1);
+            expect(fakeObserver.next.mock.calls[2][0]).toBe(2);
+            expect(fakeObserver.next.mock.calls[3][0]).toBe(3);
+        });
+
+        it('.subscribe() returns the subscription', () => {
+            const fakeObservable = Observable.interval(10);
+
+            const subscription = fakeObservable.subscribe(fakeObserver);
+
+            expect(subscription).toBeDefined();
+            expect(subscription.unsubscribe).toBeDefined();
+            expect(subscription.unsubscribe).toBeInstanceOf(Function);
+        });
+    });
+
+    describe('take()', () => {
+        beforeEach(() => {
+            jest.clearAllTimers();
+            jest.useFakeTimers();
+        });
+
+        it('returns an Observable', () => {
+            const fakeObservable = Observable.interval(200);
+
+            expect(fakeObservable.take(3)).toBeInstanceOf(Observable);
+        });
+
+        it('passes through values unchanged', () => {
+            const fakeObservable = Observable.interval(10).take(3);
+
+            fakeObservable.subscribe(fakeObserver);
+            jest.runTimersToTime(100);
+
+            expect(fakeObserver.next.mock.calls[0][0]).toBe(0);
+            expect(fakeObserver.next.mock.calls[1][0]).toBe(1);
+            expect(fakeObserver.next.mock.calls[2][0]).toBe(2);
+        });
+
+        it('emits only specified amount of values emited first by the parent Observable', () => {
+            const fakeObservable = Observable.interval(10).take(3);
+
+            fakeObservable.subscribe(fakeObserver);
+            jest.runTimersToTime(100);
+
+            expect(fakeObserver.next).toHaveBeenCalledTimes(3);
+        });
+
+        it('completes immediately if 0 is passed', () => {
+            const fakeObservable = Observable.interval(10).take(0);
+
+            fakeObservable.subscribe(fakeObserver);
+            jest.runTimersToTime();
+        
+            expect(fakeObserver.next).toHaveBeenCalledTimes(0);
+            expect(fakeObserver.complete).toHaveBeenCalledTimes(1);
+        });
+
+        it('completes after emiting specified amount of values', () => {
+            const fakeObservable = Observable.interval(10).take(3);
+
+            fakeObservable.subscribe(fakeObserver);
+            jest.runTimersToTime(100);
+
+            expect(fakeObserver.complete).toHaveBeenCalledTimes(1);
+        });
+
+        it('.subscribe() returns the subscription', () => {
+            const fakeObservable = Observable.interval(10).take(10);
 
             const subscription = fakeObservable.subscribe(fakeObserver);
 
