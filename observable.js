@@ -74,6 +74,44 @@ class Observable {
             };
         });
     }
+
+    // ex. 4
+    map(projection) {
+        return new Observable(observer => {
+            const subscription = this.subscribe({
+                next(value) {
+                    observer.next(projection(value));
+                },
+                error(reason) {
+                    observer.error(reason);
+                },
+                complete() {
+                    observer.complete();
+                },
+            });
+
+            return {
+                unsubscribe() {
+                    subscription.unsubscribe();
+                },
+            };
+        });
+    }
+
+    // ex. 5
+    concat() {
+        // your  code...
+    }
+
+    // ex. 6
+    merge() {
+        // your  code...
+    }
+
+    // ex. 7
+    switch() {
+        // your  code...
+    }
 }
 
 module.exports = {
