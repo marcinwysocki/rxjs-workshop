@@ -16,11 +16,6 @@ class Observable {
     static interval(period) {
         // your code...
     }
-
-    // ex. 3 
-    take(count) {
-        // your code...
-    }
 }
 
 module.exports = {

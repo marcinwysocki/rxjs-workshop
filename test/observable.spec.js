@@ -12,29 +12,31 @@ describe('Observable', () => {
         });
     });
 
-    it("doesn't do any work at initialization", () => {
-        const spy = jest.fn();
-        const fakeObservable = new Observable(observer => {
-            spy();
-            observer.complete();
+    describe('instance', () => {
+        it("doesn't do any work at initialization", () => {
+            const spy = jest.fn();
+            const fakeObservable = new Observable(observer => {
+                spy();
+                observer.complete();
+            });
+
+            expect(spy).not.toHaveBeenCalled();
         });
 
-        expect(spy).not.toHaveBeenCalled();
-    });
+        it('does the actual work after subscribing to it', () => {
+            const spy = jest.fn();
+            const fakeObservable = new Observable(observer => {
+                spy();
+                observer.complete();
+            });
 
-    it('does the actual work after subscribing to it', () => {
-        const spy = jest.fn();
-        const fakeObservable = new Observable(observer => {
-            spy();
-            observer.complete();
+            expect(spy).not.toHaveBeenCalled();
+
+            fakeObservable.subscribe(fakeObserver);
+
+            expect(spy).toHaveBeenCalled();
+            expect(fakeObserver.complete).toHaveBeenCalled();
         });
-
-        expect(spy).not.toHaveBeenCalled();
-
-        fakeObservable.subscribe(fakeObserver);
-
-        expect(spy).toHaveBeenCalled();
-        expect(fakeObserver.complete).toHaveBeenCalled();
     });
 
     describe('.of()', () => {
@@ -119,68 +121,6 @@ describe('Observable', () => {
 
         it('.subscribe() returns the subscription', () => {
             const fakeObservable = Observable.interval(10);
-
-            const subscription = fakeObservable.subscribe(fakeObserver);
-
-            expect(subscription).toBeDefined();
-            expect(subscription.unsubscribe).toBeDefined();
-            expect(subscription.unsubscribe).toBeInstanceOf(Function);
-        });
-    });
-
-    describe('take()', () => {
-        beforeEach(() => {
-            jest.clearAllTimers();
-            jest.useFakeTimers();
-        });
-
-        it('returns an Observable', () => {
-            const fakeObservable = Observable.interval(200);
-
-            expect(fakeObservable.take(3)).toBeInstanceOf(Observable);
-        });
-
-        it('passes through values unchanged', () => {
-            const fakeObservable = Observable.interval(10).take(3);
-
-            fakeObservable.subscribe(fakeObserver);
-            jest.runTimersToTime(100);
-
-            expect(fakeObserver.next.mock.calls[0][0]).toBe(0);
-            expect(fakeObserver.next.mock.calls[1][0]).toBe(1);
-            expect(fakeObserver.next.mock.calls[2][0]).toBe(2);
-        });
-
-        it('emits only specified amount of values emited first by the parent Observable', () => {
-            const fakeObservable = Observable.interval(10).take(3);
-
-            fakeObservable.subscribe(fakeObserver);
-            jest.runTimersToTime(100);
-
-            expect(fakeObserver.next).toHaveBeenCalledTimes(3);
-        });
-
-        it('completes immediately if 0 is passed', () => {
-            const fakeObservable = Observable.interval(10).take(0);
-
-            fakeObservable.subscribe(fakeObserver);
-            jest.runTimersToTime();
-        
-            expect(fakeObserver.next).toHaveBeenCalledTimes(0);
-            expect(fakeObserver.complete).toHaveBeenCalledTimes(1);
-        });
-
-        it('completes after emiting specified amount of values', () => {
-            const fakeObservable = Observable.interval(10).take(3);
-
-            fakeObservable.subscribe(fakeObserver);
-            jest.runTimersToTime(100);
-
-            expect(fakeObserver.complete).toHaveBeenCalledTimes(1);
-        });
-
-        it('.subscribe() returns the subscription', () => {
-            const fakeObservable = Observable.interval(10).take(10);
 
             const subscription = fakeObservable.subscribe(fakeObserver);
 
