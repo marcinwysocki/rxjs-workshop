@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>RxJS workshop</title>
+    <style>
+        div {
+            display: flex;
+            align-items: center;
+        }
+
+        input {
+            margin-left: 10px;
+            height: 20px;
+        }
+
+        span {
+            margin: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 20px;
+        }
+
+        .weak {
+            background-color: red;
+        }
+
+        .medium {
+            background-color: orange;
+        }
+
+        .strong {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <label for="pwd">Vanilla:</label>
+        <input type="password" name="pwd" id="pwd">
+        <span id="indicator"></span>
+        <p id="hint"></p>
+    </div>
+
+    <div>
+        <label for="rx-pwd">With RxJS:</label>
+        <input type="password" name="rx-pwd" id="rx-pwd">
+        <span id="rx-indicator"></span>
+        <p id="rx-hint"></p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.5.6/Rx.js"></script>
+    <script src="./password.js"></script>
+</body>
+</html>
