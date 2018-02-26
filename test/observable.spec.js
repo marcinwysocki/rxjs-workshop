@@ -106,6 +106,19 @@ describe('Observable', () => {
             expect(fakeObserver.next).toHaveBeenCalledTimes(4);
         });
 
+        it('starts emitting the values after specified interval', () => {
+            const fakeObservable = Observable.interval(50);
+
+            fakeObservable.subscribe(fakeObserver);
+
+            jest.runTimersToTime(25);
+            expect(fakeObserver.next).not.toHaveBeenCalled();
+            jest.runTimersToTime(25);
+            expect(fakeObserver.next).toHaveBeenCalledTimes(1);
+            jest.runTimersToTime(50);
+            expect(fakeObserver.next).toHaveBeenCalledTimes(2);
+        });
+
         it('emits incrementing numbers, starting with 0', () => {
             const fakeObservable = Observable.interval(50);
 
