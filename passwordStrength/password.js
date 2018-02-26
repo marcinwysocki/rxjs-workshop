@@ -36,7 +36,21 @@ const rxInput = document.querySelector('#rx-pwd');
 const rxIndicator = document.querySelector('#rx-indicator');
 const rxHint = document.querySelector('#rx-hint');
 
-// your code...
+const inputs = Rx.Observable.fromEvent(rxInput, 'input').map(
+    event => event.target.value,
+);
+
+inputs
+    .filter(pwd => !isPasswordToShort(pwd))
+    .filter(pwd => !isPasswordLongEnough(pwd))
+    .map(howStrongIsThePassword)
+    .startWith('weak')
+    .subscribe(setElementsClassName(rxIndicator));
+
+inputs
+    .map(getHint)
+    .startWith(getHint(''))
+    .subscribe(setInnerHtml(rxHint));
 
 /* Helpers */
 
