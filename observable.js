@@ -41,12 +41,52 @@ class Observable {
 
     // ex. 3
     map(projection) {
-        // your  code...
+        return new Observable(observer => {
+            const sub = this.subscribe({
+                next(value) {
+                    observer.next(projection(value));
+                },
+                complete() {
+                    observer.complete();
+                },
+            });
+
+            return {
+                unsubscribe() {
+                    sub.unsubscribe();
+                },
+            };
+        });
     }
 
     // ex. 4
     take(count) {
-        // your  code...
+        return new Observable(observer => {
+            let counter = 0;
+
+            const sub = this.subscribe({
+                next(value) {
+                    if (counter === count) {
+                        sub.unsubscribe();
+                        observer.complete();
+                        return;
+                    }
+
+                    observer.next(value);
+                    counter++;
+                },
+                complete() {
+                    sub.unsubscribe();
+                    observer.complete();
+                },
+            });
+
+            return {
+                unsubscribe() {
+                    sub.unsubscribe();
+                },
+            };
+        });
     }
 }
 
