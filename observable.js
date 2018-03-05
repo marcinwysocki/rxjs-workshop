@@ -1,10 +1,10 @@
 class Observable {
     constructor(subscribe) {
-        this.subscribe = subscribe;
+        this._subscribe = subscribe;
     }
 
     subscribe(observer) {
-        return this.subscribe(observer);
+        return this._subscribe(observer);
     }
 
     // ex. 1
