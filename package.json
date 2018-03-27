@@ -15,10 +15,23 @@
   "author": "Marcin Wysocki",
   "license": "MIT",
   "dependencies": {
-    "jest": "^21.2.1"
+    "@types/jest": "^22.2.0",
+    "@types/node": "^9.6.0",
+    "jest": "^21.2.1",
+    "rxjs": "^5.5.7",
+    "ts-jest": "^22.4.1",
+    "typescript": "^2.7.2"
   },
   "jest": {
     "verbose": true,
-    "testRegex": "test/.*\\.spec\\.js"
+    "testRegex": "/.*\\.spec\\.*",
+    "transform": {
+      "^.+\\.ts?$": "ts-jest"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json"
+    ]
   }
 }
