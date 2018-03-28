@@ -28,7 +28,7 @@
     UWAGA: część testów jest początkowo pominięta, żeby nie śmieciły w konsoli. Żeby je uaktywnić zamień 'xdescribe' na 'describe'.
 */
 
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 const NodeEventEmitter = require('events');
 
 export interface IServiceConfig {
@@ -93,29 +93,68 @@ export interface IEventEmitterService {
 /*********************************************************/
 
 class EventEmitterService implements IEventEmitterService {
+    private connection$: Subject<void>;
+
     constructor(
         private client: IEventEmitterClient,
         private config: IServiceConfig,
-    ) {}
-
-    publishEvent(event: IncomingEvent): void {
-        throw new Error('Method not implemented.');
+    ) {
+        this.connection$ = new Subject();
     }
 
     events(): Observable<IncomingEvent> {
-        throw new Error('Method not implemented.');
+        return Observable.fromEvent<RawEvent>(
+            this.client,
+            EventEmitterEvents.IncomingEvent,
+        )
+            .filter(({ senderId }) => senderId !== this.config.ownId)
+            .map(({ name, data }) => ({
+                name,
+                payload: data,
+            }));
     }
 
-    connect(): void {
-        throw new Error('Method not implemented.');
+    connect() {
+        this.connection$.next();
+        this.client.connect();
     }
 
-    disconnect(): void {
-        throw new Error('Method not implemented.');
+    disconnect() {
+        this.client.disconnect();
+    }
+
+    publishEvent(event) {
+        this.client.publishEvent(event);
     }
 
     connectionStates(): Observable<ConnectionState> {
-        throw new Error('Method not implemented.');
+        return Observable.merge(
+            this.connection$.mapTo({ type: ConnectionStateType.Connecting }),
+            Observable.fromEvent(
+                this.client,
+                EventEmitterEvents.SessionStarted,
+            ).mapTo({ type: ConnectionStateType.Connected }),
+            Observable.fromEvent(
+                this.client,
+                EventEmitterEvents.Disconnected,
+            ).mapTo({ type: ConnectionStateType.Disconnected }),
+            Observable.fromEvent(
+                this.client,
+                EventEmitterEvents.ConnectionTimeout,
+            ).mapTo({
+                type: ConnectionStateType.Disconnected,
+                error: new Error('Connection timeout'),
+            }),
+            Observable.fromEvent(
+                this.client,
+                EventEmitterEvents.AuthFailed,
+            ).mapTo({
+                type: ConnectionStateType.Disconnected,
+                error: new Error('Authorization failed'),
+            }),
+        ).distinctUntilChanged<ConnectionState>(
+            (a, b) => a.type === b.type && !!a.error === !!b.error,
+        );
     }
 }
 
@@ -234,7 +273,7 @@ describe('EventEmitterService', () => {
         });
     });
 
-    xdescribe('connection', () => {
+    describe('connection', () => {
         it('calls the client to establish a connection', () => {
             eventEmitterService.connect();
 
